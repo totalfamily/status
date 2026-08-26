@@ -1,0 +1,41 @@
+/* Total Family — dark theme
+   Palette taken from help.totalfamily.io: deep teal-green surface (#162525),
+   sage cards (#2f3e3c), terracotta accent (#db684c). */
+:root {
+  --body-background-color: #162525;
+  --body-text-color: #f8f8f8;
+
+  --card-background-color: #2f3e3c;
+  --card-border-color: #2d3b37;
+
+  --nav-background-color: #162525;
+  --nav-border-bottom-color: #2d3b37;
+  --nav-current-border-bottom-color: #db684c;
+
+  --up-border-left-color: #47be8b;
+  --up-color-color: #47be8b;
+  --down-border-left-color: #f14d4c;
+  --down-color-color: #f14d4c;
+  --down-background-color: #4f1a18;
+  --degraded-border-left-color: #ee7e00;
+  --degraded-color-color: #ee7e00;
+
+  --tag-color: #162525;
+  --tag-up-background-color: #47be8b;
+  --tag-down-background-color: #f14d4c;
+  --tag-degraded-background-color: #ee7e00;
+  --change-background-color: #ee7e00;
+
+  --code-background-color: #2d3b37;
+  --code-color: #acbcb5;
+
+  --submit-button-border-color: #db684c;
+  --submit-button-background-color: #db684c;
+  --submit-button-color: #ffffff;
+  --error-button-border-color: #f14d4c;
+  --error-button-background-color: #f14d4c;
+  --error-button-color: #ffffff;
+
+  --graph-opacity: 0.95;
+  --graph-filter: none;
+}
