@@ -1,26 +1,41 @@
+/* Total Family — light theme
+   Palette taken from help.totalfamily.io: warm off-white surface (#fdfaf4),
+   deep teal-green text (#162525), terracotta accent (#a35b48). */
 :root {
-  --body-background-color: #f0f7f7;
-  --body-text-color: #002626;
-  --card-background-color: #ffffff;
-  --nav-background-color: #ffffff;
-  --nav-border-bottom-color: #d8e8e4;
-  --nav-current-border-bottom-color: #1abc9c;
-  --card-border-color: #d8e8e4;
-  --down-border-left-color: #eb3b5a;
-  --down-background-color: #ffd0d2;
-  --degraded-border-left-color: #f7b731;
-  --up-border-left-color: #20bf6b;
-  --tag-color: #ffffff;
-  --tag-up-background-color: #20bf6b;
-  --tag-down-background-color: #eb3b5a;
-  --tag-degraded-background-color: #f7b731;
-  --change-background-color: #f7b731;
-  --error-button-border-color: #1a46ad;
-  --error-button-background-color: #3867d6;
-  --error-button-color: #ffffff;
-  --submit-button-border-color: #1a46ad;
-  --submit-button-background-color: #3867d6;
-  --submit-button-color: #ffffff;
+  --body-background-color: #fdfaf4;
+  --body-text-color: #162525;
+
+  --card-background-color: #fffdfa;
+  --card-border-color: #e8e0d7;
+
+  --nav-background-color: #fffdfa;
+  --nav-border-bottom-color: #e8e0d7;
+  --nav-current-border-bottom-color: #a35b48;
+
+  --up-border-left-color: #007d53;
+  --up-color-color: #007d53;
+  --down-border-left-color: #cc272e;
+  --down-color-color: #cc272e;
+  --down-background-color: #ffdcd7;
+  --degraded-border-left-color: #ce6d4f;
+  --degraded-color-color: #ce6d4f;
+
+  --tag-color: #fffdfa;
+  --tag-up-background-color: #007d53;
+  --tag-down-background-color: #cc272e;
+  --tag-degraded-background-color: #ce6d4f;
+  --change-background-color: #ce6d4f;
+
+  --code-background-color: #f4efe7;
+  --code-color: #162525;
+
+  --submit-button-border-color: #a35b48;
+  --submit-button-background-color: #a35b48;
+  --submit-button-color: #fffdfa;
+  --error-button-border-color: #cc272e;
+  --error-button-background-color: #cc272e;
+  --error-button-color: #fffdfa;
+
   --graph-opacity: 1;
   --graph-filter: none;
 }
