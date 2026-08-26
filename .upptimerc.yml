@@ -11,12 +11,24 @@ sites:
 assignees:
   - 1andonlyamit
 
+# Keep the README ours: don't re-add the "Powered by" promo line, and don't
+# overwrite the repo description we set by hand.
+skipPoweredByReadme: true
+skipDescriptionUpdate: true
+skipTopicsUpdate: true
+
+# Commits from the monitor should read as ours, not a third party's
+commitMessages:
+  commitAuthorName: Total Family Status Bot
+  commitAuthorEmail: hello@totalfamily.io
+
 status-website:
   # Temporarily serving from https://totalfamily.github.io/status to verify the
   # page renders before pointing DNS at it. Restore `cname` and remove `baseUrl`
   # to go live on the custom domain.
   # cname: status.totalfamily.io
   baseUrl: /status
+  logoUrl: https://help.totalfamily.io/img/tf-logo-dark.webp
   name: Total Family Status
   introTitle: "Total Family System Status"
   introMessage: Live availability and incident history for Total Family services.
