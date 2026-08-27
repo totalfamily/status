@@ -2,10 +2,27 @@ owner: totalfamily
 repo: status
 
 sites:
+  # Both components read the same health endpoint but assert on different
+  # parts of its response, so an application failure and a database failure
+  # surface as separate incidents.
+  - name: Web Application
+    url: https://app.totalfamily.io/api/health
+    slug: web-application
+    maxResponseTime: 1500
+    __dangerous__body_down_if_text_missing: '"success":true'
+  - name: Database
+    url: https://app.totalfamily.io/api/health
+    slug: database
+    maxResponseTime: 1500
+    # The endpoint returns 200 even when the Supabase check fails, so a
+    # status-code check alone would report green during a database outage.
+    __dangerous__body_down_if_text_missing: '"database":{"status":"pass"'
   - name: Website
     url: https://totalfamily.io
+    maxResponseTime: 1000
   - name: Help Center
     url: https://help.totalfamily.io
+    maxResponseTime: 2500
 
 # Auto-assign downtime issues so a human gets pinged on a real outage
 assignees:
