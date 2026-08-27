@@ -2,10 +2,19 @@ owner: totalfamily
 repo: status
 
 sites:
+  - name: Web Application
+    url: https://app.totalfamily.io/api/health
+    icon: https://help.totalfamily.io/img/tf-logo-dark.webp
+    maxResponseTime: 1500
+    # Health endpoint returns 200 with "status":"unhealthy" when the database
+    # check fails, so a status-code check alone would miss a DB outage.
+    __dangerous__body_down_if_text_missing: '"status":"healthy"'
   - name: Website
     url: https://totalfamily.io
+    maxResponseTime: 1000
   - name: Help Center
     url: https://help.totalfamily.io
+    maxResponseTime: 2500
 
 # Auto-assign downtime issues so a human gets pinged on a real outage
 assignees:
