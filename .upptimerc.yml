@@ -33,11 +33,7 @@ commitMessages:
   commitAuthorEmail: hello@totalfamily.io
 
 status-website:
-  # Temporarily serving from https://totalfamily.github.io/status to verify the
-  # page renders before pointing DNS at it. Restore `cname` and remove `baseUrl`
-  # to go live on the custom domain.
-  # cname: status.totalfamily.io
-  baseUrl: /status
+  cname: status.totalfamily.io
   logoUrl: https://help.totalfamily.io/img/tf-logo-dark.webp
   name: Total Family Status
   introTitle: "Total Family System Status"
