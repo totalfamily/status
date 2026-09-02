@@ -40,30 +40,29 @@
   --graph-filter: none;
 }
 
-/* --- Header layout -------------------------------------------------------
-   Logo left, navigation beside it, matching help.totalfamily.io.
+/* --- Chrome removal + branding ------------------------------------------
+   The upstream navigation and footer are hidden and the Total Family
+   wordmark is placed above the page heading instead, so the page carries
+   our branding rather than the template's.
 
-   !important is used deliberately: the upstream status-page package ships
-   scoped selectors with a build hash (.svelte-a08hsz) that changes between
-   releases. Matching their specificity would silently break on the next
-   Upptime update, so we override by weight instead of by hash. */
-nav[class*="svelte-"] {
-  display: flex !important;
-  align-items: center !important;
-  gap: 2rem !important;
-  padding: 0 1.5rem !important;
+   !important against hash-agnostic selectors is deliberate: the upstream
+   package scopes its CSS with a build hash (.svelte-a08hsz) that changes
+   between releases, so matching its specificity would break silently on
+   the next Upptime update. */
+nav[class*="svelte-"],
+footer[class*="svelte-"] {
+  display: none !important;
 }
-nav [class*="logo"] {
-  float: none !important;
-  margin-right: 0 !important;
-  flex-shrink: 0 !important;
+
+main.container > header {
+  padding-top: 3rem;
 }
-nav [class*="logo"] img {
-  height: 2.5rem !important;
-  margin-right: 0 !important;
-  border-radius: 0 !important;
-}
-nav ul {
-  justify-content: flex-start !important;
-  gap: 1.75rem !important;
+
+main.container > header::before {
+  content: "";
+  display: block;
+  width: 200px;
+  height: 58px;
+  margin-bottom: 1.75rem;
+  background: url("https://help.totalfamily.io/img/tf-logo-dark.webp") left center / contain no-repeat;
 }
