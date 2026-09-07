@@ -2,9 +2,6 @@ owner: totalfamily
 repo: status
 
 sites:
-  # The health endpoint reports three states. Both "healthy" and "degraded"
-  # return HTTP 200 and only "unhealthy" returns 503, so the state has to be
-  # read from the body rather than the status code.
   - name: Total Family App
     url: https://app.totalfamily.io/api/health
     slug: total-family-app
@@ -13,21 +10,16 @@ sites:
     __dangerous__body_down: '"status":"unhealthy"'
   - name: Total Family Help Center
     url: https://help.totalfamily.io
-    # Explicit slug keeps the uptime history recorded before the rename.
     slug: help-center
     maxResponseTime: 2500
 
-# Auto-assign downtime issues so a human gets pinged on a real outage
 assignees:
   - 1andonlyamit
 
-# Keep the README ours: don't re-add the "Powered by" promo line, and don't
-# overwrite the repo description we set by hand.
 skipPoweredByReadme: true
 skipDescriptionUpdate: true
 skipTopicsUpdate: true
 
-# Commits from the monitor should read as ours, not a third party's
 commitMessages:
   commitAuthorName: Total Family Status Bot
   commitAuthorEmail: hello@totalfamily.io

@@ -1,6 +1,4 @@
-/* Total Family — dark theme
-   Palette taken from help.totalfamily.io: deep teal-green surface (#162525),
-   sage cards (#2f3e3c), terracotta accent (#db684c). */
+/* Total Family — dark theme */
 :root {
   --body-background-color: #162525;
   --body-text-color: #f8f8f8;
@@ -40,15 +38,7 @@
   --graph-filter: none;
 }
 
-/* --- Chrome removal + branding ------------------------------------------
-   The upstream navigation and footer are hidden and the Total Family
-   wordmark is placed above the page heading instead, so the page carries
-   our branding rather than the template's.
-
-   !important against hash-agnostic selectors is deliberate: the upstream
-   package scopes its CSS with a build hash (.svelte-a08hsz) that changes
-   between releases, so matching its specificity would break silently on
-   the next Upptime update. */
+/* Navigation and footer hidden; wordmark placed above the heading. */
 nav[class*="svelte-"],
 footer[class*="svelte-"] {
   display: none !important;
@@ -67,7 +57,7 @@ main.container > header::before {
   background: url("https://help.totalfamily.io/img/tf-logo-dark.webp") left center / contain no-repeat;
 }
 
-/* The published wordmark is dark ink, so invert it on the dark surface. */
+/* Invert the wordmark on the dark surface. */
 main.container > header::before {
   filter: brightness(0) invert(1);
 }
