@@ -64,7 +64,7 @@ main.container > header::before {
   width: 200px;
   height: 58px;
   margin-bottom: 1.75rem;
-  background: url("https://help.totalfamily.io/img/tf-logo-dark.webp") left center / contain no-repeat;
+  background: url("/tf-logo.webp") left center / contain no-repeat;
 }
 
 /* The published wordmark is dark ink, so invert it on the dark surface. */
