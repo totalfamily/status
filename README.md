@@ -31,15 +31,15 @@ We check our services every few minutes and publish the results here automatical
 
 | Service         | What it is                                                                    |
 | --------------- | ----------------------------------------------------------------------------- |
-| **Website**     | [totalfamily.io](https://totalfamily.io) — our public website                 |
-| **Help Center** | [help.totalfamily.io](https://help.totalfamily.io) — guides, FAQs and support |
+| **Total Family App** | [app.totalfamily.io](https://app.totalfamily.io) — the Total Family application |
+| **Total Family Help Center** | [help.totalfamily.io](https://help.totalfamily.io) — guides, FAQs and support |
 
 ## How this works
 
 Every check runs on a schedule and writes its result straight into this repository:
 
 - **Checks** run automatically and record whether each service responded, and how quickly.
-- **Incidents** are opened automatically when a service stops responding, and closed automatically when it recovers. Brief blips under 15 minutes are discarded so they do not appear as false outages.
+- **Incidents** are opened automatically when a service stops responding, and closed automatically when it recovers.
 - **History** is stored in [`history/`](./history) as plain files, so every measurement is timestamped and permanently auditable.
 - **The status page** reads this data live, so it always reflects the current state without needing to be redeployed.
 
@@ -58,7 +58,7 @@ We aim to respond within one business day.
 
 This repository is public so that anyone can independently verify our uptime record. It contains only monitoring configuration and measurement history — no application code and no customer data.
 
-Most commits here are made automatically by our status bot. Please do not enable branch protection on this repository; it would block those automated commits and freeze the status page.
+Most commits here are made automatically by our status bot.
 
 ## License
 
