@@ -1,6 +1,4 @@
-/* Total Family — light theme
-   Palette taken from help.totalfamily.io: warm off-white surface (#fdfaf4),
-   deep teal-green text (#162525), terracotta accent (#a35b48). */
+/* Total Family — light theme */
 :root {
   --body-background-color: #fdfaf4;
   --body-text-color: #162525;
@@ -40,15 +38,7 @@
   --graph-filter: none;
 }
 
-/* --- Chrome removal + branding ------------------------------------------
-   The upstream navigation and footer are hidden and the Total Family
-   wordmark is placed above the page heading instead, so the page carries
-   our branding rather than the template's.
-
-   !important against hash-agnostic selectors is deliberate: the upstream
-   package scopes its CSS with a build hash (.svelte-a08hsz) that changes
-   between releases, so matching its specificity would break silently on
-   the next Upptime update. */
+/* Navigation and footer hidden; wordmark placed above the heading. */
 nav[class*="svelte-"],
 footer[class*="svelte-"] {
   display: none !important;
