@@ -26,12 +26,7 @@ commitMessages:
 
 status-website:
   cname: status.totalfamily.io
-  # Brand assets are served from this repo's assets/ folder rather than
-  # help.totalfamily.io. The status page must not depend on a service it
-  # reports on -- a help centre outage would otherwise break the branding
-  # on the very page announcing that outage.
   favicon: /logo-192.png
-  logoUrl: /tf-logo.webp
   name: Total Family Status
   introTitle: "Total Family System Status"
   introMessage: Live availability and incident history for Total Family services.
