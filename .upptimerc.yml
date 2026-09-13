@@ -258,8 +258,8 @@ status-website:
     main.container section > article.down, main.container section > article.degraded, main.container section > article.up { border: 1px solid var(--card-border-color) !important; background: var(--card-background-color) !important; }
     main.container section > article.down-active h4::before { content: ""; display: inline-block; width: 0.55rem; height: 0.55rem; margin-right: 0.55rem; border-radius: 50%; vertical-align: 0.1em; background: var(--down-color-color); }
     main.container section > article.down-active.degraded h4::before { background: var(--degraded-color-color); }
-    main.container > header + section > h2:first-child, #tf-preview-incident > h2 { margin-top: 0 !important; }
-    #tf-preview-incident { margin-bottom: 2.5rem; }
+    main.container > header + section > h2:first-child { margin-top: 0 !important; }
+    main.container > section:has(> article.down-active) { margin-bottom: 2.5rem; }
 
     /* Error, not-found and rate-limit pages: Upptime renders their heading, text and
        actions straight into <main>, so <main> itself becomes the card. */
@@ -277,14 +277,6 @@ status-website:
     main.container > form label span { margin-bottom: 0.4rem; font-size: 0.875rem; font-weight: 600; }
     main.container > form input, main.container > button:not(.submit-button) { font: inherit; font-size: 0.9rem; padding: 0.55rem 0.8rem; color: var(--body-text-color); background: var(--body-background-color); border: 1px solid var(--card-border-color); border-radius: 0.6rem; }
     main.container > form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem; }
-
-    /* Preview switcher for error states (localhost or ?preview=1 only). */
-    #tf-preview { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 0.2rem; padding: 0.3rem; font-size: 0.8rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 999px; box-shadow: var(--tf-shadow); }
-    #tf-preview > span { padding: 0 0.45rem 0 0.6rem; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tf-muted); }
-    #tf-preview button { font: inherit; font-weight: 600; padding: 0.35rem 0.75rem; border: 0; border-radius: 999px; background: transparent; color: var(--body-text-color); cursor: pointer; }
-    #tf-preview button:hover { background: var(--tf-hover); }
-    #tf-preview button:focus-visible { outline: 2px solid var(--tf-primary); outline-offset: 1px; }
-    #tf-preview button[aria-pressed="true"] { color: #fff; background: var(--tf-accent); }
 
     main.container section:has(> canvas), main.container section:has(> div > canvas) { padding: 0 1.5rem 1.25rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); }
     main.container section:has(> canvas) > h2, main.container section:has(> div > canvas) > h2 { margin: 1.25rem 0 0.75rem !important; font-size: 1rem; }
@@ -332,12 +324,8 @@ status-website:
       var RANGES = [["Day", "24h", "Last 24 hours"], ["Week", "7d", "Last 7 days"], ["Month", "30d", "Last 30 days"], ["Year", "1y", "Last year"], ["", "All", "All time"]];
       var detailRange = "Week";
       var sites = null;
-      var liveSites = null;
       var starts = {};
       var ready = false;
-      // Preview of error states: only on localhost or with ?preview=1 in the URL.
-      var PREVIEW_ENABLED = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || /[?&]preview=1(&|$)/.test(location.search);
-      var preview = "live";
 
       function esc(text) {
         var el = document.createElement("span");
@@ -704,7 +692,6 @@ status-website:
         var page = currentPage();
         renderHome(page);
         renderSparks();
-        renderPreviewIncident(page);
         renderService(page);
         renderDetailChart(page);
       }
@@ -746,8 +733,7 @@ status-website:
       fetch(RAW + "/history/summary.json")
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          liveSites = Array.isArray(data) ? data : [];
-          sites = previewSites();
+          sites = Array.isArray(data) ? data : [];
           renderHero();
           return Promise.all(sites.map(function (site) {
             return fetch(RAW + "/history/" + site.slug + ".yml")
@@ -762,81 +748,7 @@ status-website:
         .then(function () { ready = true; render(); })
         .catch(function () { document.documentElement.classList.add("tf-load-failed"); });
 
-      // ---- Error-state preview (sample data only; never changes the real data) ----
-      function previewSites() {
-        if (preview === "live" || !liveSites) return liveSites;
-        var today = todayStart();
-        function key(daysAgo) { return new Date(today - daysAgo * DAY_MS).toISOString().slice(0, 10); }
-        return liveSites.map(function (site, i) {
-          var copy = JSON.parse(JSON.stringify(site));
-          var daily = copy.dailyMinutesDown = copy.dailyMinutesDown || {};
-          if (preview === "down" && i === 0) {
-            copy.status = "down";
-            daily[key(0)] = 138; daily[key(1)] = 42; daily[key(5)] = 9;
-            copy.timeDay = 4210; copy.timeWeek = 1890;
-            copy.uptimeDay = "90.42%"; copy.uptimeWeek = "98.21%"; copy.uptimeMonth = "99.36%";
-          } else if ((preview === "degraded" && i === liveSites.length - 1) || (preview === "down" && i === liveSites.length - 1 && i !== 0)) {
-            copy.status = "degraded";
-            daily[key(0)] = 24; daily[key(3)] = 11;
-            copy.timeDay = 2380; copy.timeWeek = 1120;
-            copy.uptimeDay = "98.33%"; copy.uptimeWeek = "99.66%"; copy.uptimeMonth = "99.89%";
-          }
-          return copy;
-        });
-      }
-      function renderPreviewIncident(page) {
-        var existing = document.getElementById("tf-preview-incident");
-        var services = document.getElementById("tf-services");
-        if (page.type !== "home" || preview === "live" || !services) { if (existing) existing.remove(); return; }
-        if (existing && existing.getAttribute("data-state") === preview) return;
-        if (existing) existing.remove();
-        var issues = sites.filter(function (s) { return s.status === "down" || s.status === "degraded"; });
-        if (!issues.length) return;
-        var section = document.createElement("section");
-        section.id = "tf-preview-incident";
-        section.setAttribute("data-state", preview);
-        // Same markup Upptime uses for real active incidents, so it previews their styling.
-        section.innerHTML = "<h2>Active Incidents</h2>" + issues.map(function (s, i) {
-          var degraded = s.status === "degraded";
-          var title = s.name + (degraded ? " has degraded performance" : " is down");
-          var opened = new Date(Date.now() - (42 + i * 15) * 60000).toLocaleString();
-          return '<article class="down down-active link' + (degraded ? " degraded" : "") + '"><div class="f"><div>' +
-            "<h4>" + esc(title) + "</h4><div>Opened at " + esc(opened) + " with " + (3 - i > 2 ? 3 - i : 2) + " posts</div></div>" +
-            '<div class="f r"><a href="#">Incident #' + (i + 1) + " report →</a></div></div></article>";
-        }).join("");
-        services.parentNode.insertBefore(section, services);
-      }
-      function setPreview(next) {
-        preview = next;
-        sites = previewSites();
-        ["tf-services", "tf-detail", "tf-preview-incident"].forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) el.remove();
-        });
-        var hero = document.getElementById("tf-hero");
-        if (hero) hero.removeAttribute("data-state");
-        var buttons = document.querySelectorAll("#tf-preview button");
-        for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-preview") === preview));
-        render();
-      }
-      function mountPreview() {
-        if (!PREVIEW_ENABLED || document.getElementById("tf-preview")) return;
-        var bar = document.createElement("div");
-        bar.id = "tf-preview";
-        bar.setAttribute("role", "group");
-        bar.setAttribute("aria-label", "Preview status states");
-        bar.innerHTML = "<span>Preview</span>" + [["live", "Live"], ["degraded", "Degraded"], ["down", "Outage"]].map(function (o) {
-          return '<button type="button" data-preview="' + o[0] + '" aria-pressed="' + (o[0] === preview) + '">' + o[1] + "</button>";
-        }).join("");
-        bar.addEventListener("click", function (e) {
-          var button = e.target.closest("button");
-          if (button) setPreview(button.getAttribute("data-preview"));
-        });
-        document.body.appendChild(bar);
-      }
-
       function start() {
-        mountPreview();
         render();
         new MutationObserver(render).observe(document.body, { childList: true, subtree: true });
       }
