@@ -37,3 +37,809 @@ status-website:
       href: https://help.totalfamily.io
     - title: Website
       href: https://totalfamily.io
+
+  # Header: banner with logo, title, Help Centre + Report a problem buttons,
+  # and an overall status card whose icon/text are filled in by `js`.
+  customBodyHtml: |
+    <header class="tf-banner">
+      <div class="container">
+        <div class="tf-bar">
+          <a class="tf-brand" href="/" aria-label="Total Family Status home">
+            <img src="/tf-logo.webp" alt="Total Family" width="72" height="48" />
+            <span>Status</span>
+          </a>
+          <div class="tf-actions">
+            <a class="tf-btn tf-btn-ghost" href="https://help.totalfamily.io" target="_blank" rel="noopener">Help Centre</a>
+            <a class="tf-btn tf-btn-primary" href="https://totalfamily.io/company/contact-us" target="_blank" rel="noopener">Report a problem</a>
+          </div>
+        </div>
+        <div class="tf-intro">
+          <h1>Total Family Status</h1>
+          <p>Live availability and incident history for Total Family services.</p>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="tf-card tf-hero" id="tf-hero" data-state="loading" role="status" aria-live="polite">
+        <span class="tf-status-icon is-loading" aria-hidden="true"></span>
+        <p class="tf-hero-title">Checking status…</p>
+      </div>
+      <div class="tf-skeleton tf-skeleton-home" aria-hidden="true">
+        <div class="tf-section-head"><span class="tf-skel tf-skel-title"></span><span class="tf-skel tf-skel-meta"></span></div>
+        <div class="tf-card tf-grid">
+          <div class="tf-cell">
+            <div class="tf-service-head"><div class="tf-skel-row"><span class="tf-skel tf-skel-dot"></span><span class="tf-skel tf-skel-name"></span></div><span class="tf-skel tf-skel-icon"></span></div>
+            <span class="tf-skel tf-skel-bars"></span><span class="tf-skel tf-skel-line"></span><span class="tf-skel tf-skel-chart"></span><span class="tf-skel tf-skel-caption"></span>
+          </div>
+          <div class="tf-cell">
+            <div class="tf-service-head"><div class="tf-skel-row"><span class="tf-skel tf-skel-dot"></span><span class="tf-skel tf-skel-name"></span></div><span class="tf-skel tf-skel-icon"></span></div>
+            <span class="tf-skel tf-skel-bars"></span><span class="tf-skel tf-skel-line"></span><span class="tf-skel tf-skel-chart"></span><span class="tf-skel tf-skel-caption"></span>
+          </div>
+        </div>
+      </div>
+      <div class="tf-skeleton tf-skeleton-service" aria-hidden="true">
+        <span class="tf-skel tf-skel-small"></span>
+        <span class="tf-skel tf-skel-heading"></span>
+        <div class="tf-section-head tf-kpi-head"><span class="tf-skel tf-skel-range"></span></div>
+        <div class="tf-card tf-grid tf-section">
+          <div class="tf-cell"><span class="tf-skel tf-skel-small"></span><span class="tf-skel tf-skel-value"></span><span class="tf-skel tf-skel-small"></span></div>
+          <div class="tf-cell"><span class="tf-skel tf-skel-small"></span><span class="tf-skel tf-skel-value"></span><span class="tf-skel tf-skel-small"></span></div>
+        </div>
+        <div class="tf-card tf-linechart"><span class="tf-skel tf-skel-name"></span><span class="tf-skel tf-skel-plot"></span><span class="tf-skel tf-skel-caption"></span></div>
+      </div>
+    </div>
+
+  css: |
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 880px; }
+    .tf-short { display: none; }
+
+    /* Replaced by the banner and the sections rendered by `js`: default nav,
+       footer, page header, "All systems are operational" row and Live Status list. */
+    nav[class*="svelte-"], footer[class*="svelte-"], main.container > header, main.container > header + article.up,
+    main.container > div.f, section.live-status { display: none !important; }
+    /* Service page: the uptime/response summary is replaced by the KPI card once it renders. */
+    html.tf-detail-ready main.container section > dl { display: none; }
+
+    /* ---------- Shared building blocks ---------- */
+    .tf-card { background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); color: var(--body-text-color); }
+    .tf-section { margin-bottom: 2.5rem; }
+    .tf-section-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 1rem; margin-bottom: 0.9rem; }
+    .tf-section-head h2 { margin: 0 !important; }
+    .tf-section-meta { margin: 0; font-size: 0.875rem; color: var(--tf-muted); }
+    main.container h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.005em; }
+    .tf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; overflow: hidden; background: var(--card-border-color); }
+    .tf-grid-1 { grid-template-columns: 1fr; }
+    .tf-cell { position: relative; min-width: 0; padding: 1.25rem 1.5rem; background: var(--card-background-color); }
+    .tf-cell:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    .tf-grid > .tf-cell { margin: 0 !important; }
+    .tf-status-icon { flex: none; display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; color: var(--tag-color); background: var(--up-color-color); }
+    .tf-status-icon svg { width: 62%; height: 62%; }
+    .tf-status-icon.is-degraded { background: var(--degraded-color-color); }
+    .tf-status-icon.is-down { background: var(--down-color-color); }
+    /* ---------- Loading skeletons ---------- */
+    @keyframes tf-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+    .tf-skel, .tf-status-icon.is-loading, .tf-hero[data-state="loading"] .tf-hero-title { background: linear-gradient(90deg, var(--tf-skel) 25%, var(--tf-skel-hi) 50%, var(--tf-skel) 75%); background-size: 200% 100%; animation: tf-shimmer 1.4s ease-in-out infinite; }
+    .tf-hero[data-state="loading"] .tf-hero-title { min-width: 13rem; color: transparent; border-radius: 0.4rem; }
+    .tf-skel { display: block; border-radius: 0.4rem; }
+    .tf-skeleton { display: none; }
+    html.tf-page-home:not(.tf-home-ready) .tf-skeleton-home, html.tf-page-service:not(.tf-detail-ready) .tf-skeleton-service { display: block; }
+    html.tf-load-failed .tf-skeleton { display: none !important; }
+    html.tf-page-home div.loading, html.tf-page-service div.loading { display: none !important; }
+    .tf-skeleton-home, .tf-skeleton-service { margin-bottom: 2.5rem; }
+    .tf-skeleton .tf-cell > .tf-skel + .tf-skel, .tf-linechart > .tf-skel + .tf-skel { margin-top: 0.75rem; }
+    .tf-skel-row { display: flex; align-items: center; gap: 0.55rem; }
+    .tf-skel-title { width: 9rem; height: 1.25rem; }
+    .tf-skel-meta { width: 11rem; height: 0.85rem; }
+    .tf-skel-dot { width: 1.25rem; height: 1.25rem; border-radius: 0.3rem; }
+    .tf-skel-name { width: 10rem; height: 1rem; }
+    .tf-skel-icon { width: 1.6rem; height: 1.6rem; border-radius: 50%; }
+    .tf-skel-bars { height: 2.25rem; }
+    .tf-skel-line { height: 0.8rem; }
+    .tf-skel-chart { height: 4.5rem; }
+    .tf-skel-caption { width: 60%; height: 0.8rem; }
+    .tf-skel-small { width: 6rem; height: 0.8rem; }
+    .tf-skel-heading { width: 14rem; height: 1.75rem; margin: 1rem 0; }
+    .tf-skel-range { width: 15rem; height: 2.2rem; border-radius: 0.6rem; }
+    .tf-skel-value { width: 8rem; height: 2rem; }
+    .tf-skel-plot { height: 15rem; }
+    @media (prefers-reduced-motion: reduce) {
+      .tf-skel, .tf-status-icon.is-loading, .tf-hero[data-state="loading"] .tf-hero-title { animation: none; }
+    }
+    .tf-state { margin: 0; font-size: 0.85rem; font-weight: 600; color: var(--up-color-color); }
+    .tf-state.is-degraded { color: var(--degraded-color-color); }
+    .tf-state.is-down { color: var(--down-color-color); }
+
+    /* ---------- Banner ---------- */
+    .tf-banner { position: relative; color: #fff; background: #172322 url("/banner-bg.jpg") center / cover no-repeat; padding: 1.25rem 0 4.5rem; }
+    .tf-banner::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(12, 22, 22, 0.35), rgba(12, 22, 22, 0.7)); }
+    .tf-banner > .container { position: relative; }
+    .tf-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .tf-brand { display: flex; align-items: center; gap: 0.9rem; color: #fff; text-decoration: none; }
+    .tf-brand img { display: block; height: 48px; width: auto; filter: brightness(0) invert(1); }
+    .tf-brand span { padding-left: 0.9rem; border-left: 1px solid rgba(255, 255, 255, 0.3); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.78); }
+    .tf-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .tf-btn { display: inline-flex; align-items: center; padding: 0.55rem 1rem; border-radius: 0.6rem; border: 1px solid transparent; font-size: 0.9rem; font-weight: 600; line-height: 1.2; text-decoration: none; transition: background-color 0.15s, border-color 0.15s; }
+    .tf-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .tf-btn-ghost { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+    .tf-btn-ghost:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.65); }
+    .tf-btn-primary { color: #fff; background: #a35b48; }
+    .tf-btn-primary:hover { background: #8e4d3c; }
+    .tf-intro { margin-top: 2.75rem; }
+    .tf-intro h1 { margin: 0 0 0.4rem; font-size: clamp(1.85rem, 4vw, 2.5rem); font-weight: 600; letter-spacing: -0.01em; color: #fff; }
+    .tf-intro p { margin: 0; font-size: 1.02rem; color: rgba(255, 255, 255, 0.72); }
+
+    /* ---------- Overall status ---------- */
+    .tf-hero { position: relative; z-index: 1; display: flex; align-items: center; gap: 0.75rem; margin: -2.25rem 0 2.25rem; padding: 0.85rem 1.25rem; }
+    .tf-hero .tf-status-icon { width: 2rem; height: 2rem; }
+    .tf-hero-title { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+    /* ---------- Service cards: status, 90-day bars, 7-day response time ---------- */
+    .tf-service { cursor: pointer; transition: background-color 0.15s; }
+    .tf-service:hover { background: var(--tf-hover); }
+    .tf-service-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; }
+    .tf-service-head h3 { margin: 0 0 0.15rem; font-size: 1.05rem; font-weight: 600; opacity: 1; }
+    .tf-service-head a { color: var(--body-text-color); text-decoration: none; }
+    .tf-service-head a::after { content: ""; position: absolute; inset: 0; }
+    .tf-service-head a:focus-visible { outline: none; }
+    /* No border on click/tap; keyboard focus still shows one. */
+    .tf-service:has(h3 a:focus-visible) { box-shadow: inset 0 0 0 2px var(--tf-primary); }
+    .tf-bars { position: relative; z-index: 1; display: flex; gap: 2px; height: 2.25rem; }
+    .tf-day { flex: 1 1 0; min-width: 0; border-radius: 2px; background: var(--tf-bar-up); transition: opacity 0.15s; }
+    .tf-day:hover { opacity: 0.6; }
+    .tf-day.is-degraded { background: var(--degraded-color-color); }
+    .tf-day.is-down { background: var(--down-color-color); }
+    .tf-day.is-nodata { background: var(--tf-bar-nodata); }
+    .tf-axis { display: flex; align-items: center; gap: 0.75rem; margin-top: 0.6rem; font-size: 0.8rem; color: var(--tf-muted); white-space: nowrap; }
+    .tf-axis-line { flex: 1; height: 1px; background: var(--card-border-color); }
+    .tf-axis-uptime { font-weight: 600; color: var(--body-text-color); }
+    .tf-favicon { flex: none; width: 1.25rem; height: 1.25rem; border-radius: 0.3rem; object-fit: contain; }
+    .tf-service-head h3 { display: flex; align-items: center; gap: 0.55rem; }
+    .tf-service-head h3:has(.tf-favicon) + .tf-state { padding-left: 1.8rem; }
+    main.container section > h1 .tf-favicon { width: 1.75rem; height: 1.75rem; border-radius: 0.4rem; }
+    .tf-chart { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--card-border-color); }
+    /* Upptime's 7-day graph image: flat green fill (image used as a mask) plus a
+       green stroke traced from the image's top edge (see traceSpark in js). */
+    .tf-spark { position: relative; height: 4.5rem; }
+    .tf-spark::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--tf-spark-top), var(--tf-spark-bottom)); -webkit-mask: var(--tf-spark) center / 100% 100% no-repeat; mask: var(--tf-spark) center / 100% 100% no-repeat; }
+    .tf-spark svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; overflow: visible; }
+    .tf-spark path { fill: none; stroke: var(--tf-chart-line); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .tf-chart-foot { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 0.75rem; margin-top: 0.55rem; font-size: 0.8rem; color: var(--tf-muted); }
+    .tf-chart-foot strong { font-size: 0.95rem; font-weight: 600; color: var(--body-text-color); font-variant-numeric: tabular-nums; }
+
+    /* Service page response time chart (replaces Upptime's canvas chart once drawn). */
+    html.tf-chart-ready main.container section:has(> canvas) { display: none !important; }
+    .tf-linechart { padding: 1.25rem 1.5rem 1.1rem; }
+    .tf-card-title { margin: 0 0 0.75rem; font-size: 1rem; font-weight: 600; opacity: 1; }
+    .tf-card-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem 1rem; margin-bottom: 0.75rem; }
+    .tf-card-head .tf-card-title { margin: 0; }
+    .tf-linechart svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .tf-linechart text { fill: var(--tf-chart-axis); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .tf-yaxis line { stroke: var(--tf-chart-grid); stroke-width: 1; }
+    .tf-stop-top { stop-color: var(--tf-chart-line); stop-opacity: 0.28; }
+    .tf-stop-bottom { stop-color: var(--tf-chart-line); stop-opacity: 0; }
+    .tf-area { fill: url(#tf-area-fill); }
+    .tf-line { fill: none; stroke: var(--tf-chart-line); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+    .tf-dot { fill: var(--card-background-color); stroke: var(--tf-chart-line); stroke-width: 2; }
+    .tf-dot:has(+ .tf-point:hover) { r: 5.5px; fill: var(--tf-chart-line); }
+    .tf-point { fill: transparent; }
+    .tf-linechart .tf-chart-foot { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--card-border-color); }
+    .tf-more { margin: 0.9rem 0 0; font-size: 0.85rem; font-weight: 600; color: var(--tf-accent); }
+    #tf-tip { position: fixed; z-index: 50; pointer-events: none; transform: translate(-50%, calc(-100% - 8px)); padding: 0.5rem 0.7rem; font-size: 0.8rem; line-height: 1.35; white-space: nowrap; background: var(--card-background-color); color: var(--body-text-color); border: 1px solid var(--card-border-color); border-radius: 0.6rem; box-shadow: var(--tf-shadow); }
+    #tf-tip strong { display: block; font-weight: 600; }
+    #tf-tip span { color: var(--tf-muted); }
+
+    /* ---------- Service page KPIs: uptime + average response time for a chosen range ---------- */
+    .tf-kpi-head { justify-content: flex-end; }
+    .tf-range { display: inline-flex; gap: 0.15rem; padding: 0.2rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 0.6rem; }
+    .tf-range button { font: inherit; font-size: 0.85rem; padding: 0.3rem 0.7rem; border: 0; border-radius: 0.45rem; background: transparent; color: var(--tf-muted); cursor: pointer; }
+    .tf-range button:hover { color: var(--body-text-color); }
+    .tf-range button[aria-pressed="true"] { color: var(--tf-accent); background: var(--tf-accent-soft); font-weight: 600; }
+    .tf-range button:focus-visible { outline: 2px solid var(--tf-primary); outline-offset: 1px; }
+    .tf-kpi-label { margin: 0 0 0.35rem; font-size: 0.875rem; font-weight: 600; }
+    .tf-kpi-value { margin: 0; font-size: 2rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+    .tf-kpi-value small { margin-left: 0.2rem; font-size: 0.95rem; font-weight: 500; color: var(--tf-muted); }
+    .tf-kpi-range { margin: 0.3rem 0 0; font-size: 0.8rem; color: var(--tf-muted); }
+    .tf-back { display: inline-block; margin-bottom: 1rem; font-size: 0.875rem; font-weight: 600; color: var(--tf-accent); text-decoration: none; }
+    .tf-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ---------- Upptime sections: incidents, maintenance, service page ---------- */
+    main.container section > h2 { margin: 2.5rem 0 0.9rem !important; }
+    main.container section > h3 { margin: 1.25rem 0 0.5rem; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tf-muted); opacity: 1; }
+    main.container section > article { padding: 1rem 1.25rem; border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); color: var(--body-text-color); }
+    main.container section > article + article { margin-top: 0.75rem; }
+    main.container section > article h4 { margin: 0 0 0.2rem; font-size: 1rem; font-weight: 600; }
+    main.container section > article > .f > div:first-child > div { font-size: 0.875rem; color: var(--tf-muted); }
+    main.container section > article .f.r a { font-size: 0.875rem; font-weight: 600; color: var(--tf-accent); text-decoration: none; }
+    main.container section > h1 { display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin: 0 0 1rem; font-size: 1.6rem; font-weight: 600; }
+    main.container section > h1 a { color: var(--body-text-color); }
+    .tag { margin: 0; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    /* Incidents use the standard card; an active incident shows a status dot before its title. */
+    main.container section > article.down, main.container section > article.degraded, main.container section > article.up { border: 1px solid var(--card-border-color) !important; background: var(--card-background-color) !important; }
+    main.container section > article.down-active h4::before { content: ""; display: inline-block; width: 0.55rem; height: 0.55rem; margin-right: 0.55rem; border-radius: 50%; vertical-align: 0.1em; background: var(--down-color-color); }
+    main.container section > article.down-active.degraded h4::before { background: var(--degraded-color-color); }
+    main.container > header + section > h2:first-child, #tf-preview-incident > h2 { margin-top: 0 !important; }
+    #tf-preview-incident { margin-bottom: 2.5rem; }
+
+    /* Error, not-found and rate-limit pages: Upptime renders their heading, text and
+       actions straight into <main>, so <main> itself becomes the card. */
+    main.container:has(> h1) { width: calc(100% - 2rem); max-width: 816px; margin-bottom: 2.5rem; padding: 1.75rem 2rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); }
+    main.container > h1 { margin: 0 0 0.5rem; font-size: 1.6rem; font-weight: 600; letter-spacing: -0.01em; }
+    main.container > h2 { margin: 1.5rem 0 0.4rem; font-size: 1rem; }
+    main.container > p { margin: 0 0 1rem; font-size: 0.95rem; color: var(--tf-muted); }
+    main.container > p.lead { font-size: 1rem; color: var(--body-text-color); }
+    main.container > pre { margin: 0 0 1.25rem; padding: 0.9rem 1rem; overflow-x: auto; font-size: 0.75rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; color: var(--code-color); background: var(--code-background-color); border-radius: 0.6rem; }
+    main.container > a.error-button, .tf-error-actions a, .tf-error-actions button, main.container .submit-button { display: inline-flex; align-items: center; margin: 0; padding: 0.55rem 1rem; font: inherit; font-size: 0.9rem; font-weight: 600; line-height: 1.2; text-decoration: none; cursor: pointer; color: #fff; background: var(--tf-accent); border: 1px solid var(--tf-accent); border-radius: 0.6rem; }
+    main.container > a.error-button:hover, .tf-error-actions button:hover, main.container .submit-button:hover { background: var(--tf-accent-hover); border-color: var(--tf-accent-hover); }
+    .tf-error-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .tf-error-actions a { color: var(--body-text-color); background: transparent; border-color: var(--card-border-color); }
+    .tf-error-actions a:hover { background: var(--tf-hover); }
+    main.container > form label span { margin-bottom: 0.4rem; font-size: 0.875rem; font-weight: 600; }
+    main.container > form input, main.container > button:not(.submit-button) { font: inherit; font-size: 0.9rem; padding: 0.55rem 0.8rem; color: var(--body-text-color); background: var(--body-background-color); border: 1px solid var(--card-border-color); border-radius: 0.6rem; }
+    main.container > form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.6rem; }
+
+    /* Preview switcher for error states (localhost or ?preview=1 only). */
+    #tf-preview { position: fixed; right: 16px; bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 0.2rem; padding: 0.3rem; font-size: 0.8rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 999px; box-shadow: var(--tf-shadow); }
+    #tf-preview > span { padding: 0 0.45rem 0 0.6rem; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tf-muted); }
+    #tf-preview button { font: inherit; font-weight: 600; padding: 0.35rem 0.75rem; border: 0; border-radius: 999px; background: transparent; color: var(--body-text-color); cursor: pointer; }
+    #tf-preview button:hover { background: var(--tf-hover); }
+    #tf-preview button:focus-visible { outline: 2px solid var(--tf-primary); outline-offset: 1px; }
+    #tf-preview button[aria-pressed="true"] { color: #fff; background: var(--tf-accent); }
+
+    main.container section:has(> canvas), main.container section:has(> div > canvas) { padding: 0 1.5rem 1.25rem; background: var(--card-background-color); border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); }
+    main.container section:has(> canvas) > h2, main.container section:has(> div > canvas) > h2 { margin: 1.25rem 0 0.75rem !important; font-size: 1rem; }
+
+    @media (max-width: 640px) {
+      .tf-long { display: none; }
+      .tf-short { display: inline; }
+      .tf-banner { padding-bottom: 4rem; }
+      .tf-intro { margin-top: 2rem; }
+      .tf-brand img { height: 40px; }
+      .tf-hero { padding: 0.75rem 1rem; }
+      .tf-hero .tf-status-icon { width: 1.75rem; height: 1.75rem; }
+      .tf-hero-title { font-size: 1rem; }
+      /* Stacked cards on phones: each cell becomes its own card with a gap between. */
+      .tf-grid, .tf-card.tf-grid { grid-template-columns: 1fr; gap: 0.75rem; overflow: visible; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+      .tf-grid > .tf-cell { border: 1px solid var(--card-border-color); border-radius: 0.9rem; box-shadow: var(--tf-shadow); }
+      .tf-cell { padding: 1.1rem 1.15rem; }
+      .tf-cell:last-child:nth-child(odd) { grid-column: auto; }
+      .tf-day:nth-child(-n+60) { display: none; }
+      .tf-section-head { flex-direction: column; align-items: flex-start; gap: 0.2rem; }
+      .tf-kpi-head { justify-content: flex-start; }
+      .tf-kpi-value { font-size: 1.6rem; }
+    }
+
+  # Renders the overall status, one card per service on the home page (status,
+  # 90 daily bars, 7-day response time chart) and the KPI card on each service
+  # page. Data: history/summary.json (what the default Live Status list reads),
+  # each service's monitoring start date and its 7-day response time graph.
+  js: |
+    (function () {
+      if (window.__tfStatus) return;
+      window.__tfStatus = true;
+      var RAW = "https://raw.githubusercontent.com/totalfamily/status/master";
+      var DAY_MS = 86400000;
+      var DAYS = 90;
+      var SHORT_DAYS = 30;
+      var TITLES = { up: "All systems are operational", degraded: "Some systems are degraded", down: "Some systems are down" };
+      var STATES = { up: "Operational", degraded: "Degraded", down: "Down" };
+      var ICONS = {
+        up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+        degraded: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 6.5v7"/><path d="M12 18h.01"/></svg>',
+        down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>'
+      };
+      // Summary field suffixes: uptimeDay/timeDay … uptime/time (all time).
+      var RANGES = [["Day", "24h", "Last 24 hours"], ["Week", "7d", "Last 7 days"], ["Month", "30d", "Last 30 days"], ["Year", "1y", "Last year"], ["", "All", "All time"]];
+      var detailRange = "Week";
+      var sites = null;
+      var liveSites = null;
+      var starts = {};
+      var ready = false;
+      // Preview of error states: only on localhost or with ?preview=1 in the URL.
+      var PREVIEW_ENABLED = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || /[?&]preview=1(&|$)/.test(location.search);
+      var preview = "live";
+
+      function esc(text) {
+        var el = document.createElement("span");
+        el.textContent = text == null ? "" : String(text);
+        return el.innerHTML.replace(/"/g, "&quot;");
+      }
+      function ms(v) { return typeof v === "number" ? v.toLocaleString("en-US") + "<small>ms</small>" : "–"; }
+      function siteState(status) { return STATES[status] ? status : "up"; }
+      function overall() {
+        if (sites.some(function (s) { return s.status === "down"; })) return "down";
+        if (sites.some(function (s) { return s.status === "degraded"; })) return "degraded";
+        return "up";
+      }
+      function todayStart() {
+        var n = new Date();
+        return Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate());
+      }
+      function uptimeFor(site, days) {
+        var from = todayStart() - (days - 1) * DAY_MS;
+        if (starts[site.slug] && starts[site.slug] > from) from = starts[site.slug];
+        var monitored = (Date.now() - from) / 60000;
+        var down = 0;
+        var daily = site.dailyMinutesDown || {};
+        Object.keys(daily).forEach(function (key) {
+          if (Date.parse(key + "T00:00:00Z") >= from - DAY_MS) down += Number(daily[key]) || 0;
+        });
+        var pct = monitored > 0 ? Math.max(0, Math.min(100, 100 * (1 - down / monitored))) : 100;
+        return pct.toFixed(2) + "%";
+      }
+      function dayBars(site) {
+        var today = todayStart();
+        var start = starts[site.slug];
+        var startDay = start ? start - (start % DAY_MS) : null;
+        var daily = site.dailyMinutesDown || {};
+        var html = "";
+        for (var i = DAYS - 1; i >= 0; i--) {
+          var t = today - i * DAY_MS;
+          var key = new Date(t).toISOString().slice(0, 10);
+          var date = new Date(t).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+          var state, text;
+          if (startDay !== null && t < startDay) {
+            state = "nodata"; text = "No data";
+          } else {
+            var mins = Math.round(Number(daily[key]) || 0);
+            state = mins >= 60 ? "down" : mins > 0 ? "degraded" : "up";
+            text = mins > 0 ? mins + " min of downtime" : "No downtime recorded";
+          }
+          html += '<span class="tf-day is-' + state + '" data-date="' + esc(date) + '" data-text="' + esc(text) + '"></span>';
+        }
+        return html;
+      }
+      function currentPage() {
+        var path = location.pathname.replace(/\/+$/, "");
+        var m = /\/history\/([^/]+)$/.exec(path);
+        if (m) return { type: "service", slug: decodeURIComponent(m[1]) };
+        return path === "" ? { type: "home" } : { type: "other" };
+      }
+
+      function setPageClass(page) {
+        var root = document.documentElement.classList;
+        root.toggle("tf-page-home", page.type === "home");
+        root.toggle("tf-page-service", page.type === "service");
+      }
+
+      function renderHero() {
+        var hero = document.getElementById("tf-hero");
+        if (!hero || !sites) return;
+        var state = overall();
+        if (hero.getAttribute("data-state") === state) return;
+        hero.setAttribute("data-state", state);
+        var icon = hero.querySelector(".tf-status-icon");
+        icon.className = "tf-status-icon is-" + state;
+        icon.innerHTML = ICONS[state];
+        hero.querySelector(".tf-hero-title").textContent = TITLES[state];
+      }
+
+      function renderHome(page) {
+        var existing = document.getElementById("tf-services");
+        document.documentElement.classList.toggle("tf-home-ready", page.type === "home" && !!existing);
+        if (page.type !== "home") { if (existing) existing.remove(); return; }
+        var live = document.querySelector("section.live-status");
+        // Wait for the default Live Status list to finish loading, so the page is hydrated.
+        if (existing || !live || !live.querySelector("article")) return;
+        var anchor = live.previousElementSibling;
+        if (!anchor) return;
+
+        var section = document.createElement("section");
+        section.id = "tf-services";
+        section.className = "tf-section";
+        section.innerHTML =
+          '<div class="tf-section-head"><h2>Current Status</h2>' +
+          '<p class="tf-section-meta">Uptime over the past <span class="tf-long">' + DAYS + '</span><span class="tf-short">' + SHORT_DAYS + "</span> days</p></div>" +
+          '<div class="tf-card tf-grid">' +
+          sites.map(function (site) {
+            var state = siteState(site.status);
+            var showTime = site.showAverageResponseTime === undefined || site.showAverageResponseTime;
+            return '<article class="tf-cell tf-service">' +
+              '<div class="tf-service-head"><div><h3>' + (site.icon ? '<img class="tf-favicon" src="' + esc(site.icon) + '" alt="" width="20" height="20" />' : "") +
+              '<a href="/history/' + encodeURIComponent(site.slug) + '">' + esc(site.name) + "</a></h3>" +
+              '<p class="tf-state is-' + state + '">' + STATES[state] + "</p></div>" +
+              '<span class="tf-status-icon is-' + state + '" aria-hidden="true">' + ICONS[state] + "</span></div>" +
+              '<div class="tf-bars" role="img" aria-label="Daily uptime for ' + esc(site.name) + '">' + dayBars(site) + "</div>" +
+              '<div class="tf-axis"><span><span class="tf-long">' + DAYS + ' days ago</span><span class="tf-short">' + SHORT_DAYS + " days ago</span></span>" +
+              '<span class="tf-axis-line"></span><span class="tf-axis-uptime"><span class="tf-long">' + uptimeFor(site, DAYS) + '</span><span class="tf-short">' + uptimeFor(site, SHORT_DAYS) + "</span> uptime</span>" +
+              '<span class="tf-axis-line"></span><span>Today</span></div>' +
+              (showTime
+                ? '<div class="tf-chart"><div class="tf-spark" role="img" aria-label="Response time for ' + esc(site.name) + ' over the last 7 days" data-src="' + RAW + "/graphs/" + encodeURIComponent(site.slug) + '/response-time-week.png" style="--tf-spark: url(' + RAW + "/graphs/" + encodeURIComponent(site.slug) + '/response-time-week.png)"></div>' +
+                  '<div class="tf-chart-foot"><span>Response time · last 7 days</span><span><strong>' + (typeof site.timeWeek === "number" ? site.timeWeek.toLocaleString("en-US") + " ms" : "–") + "</strong> avg</span></div></div>"
+                : "") +
+              '<p class="tf-more" aria-hidden="true">View details →</p>' +
+              "</article>";
+          }).join("") +
+          "</div>";
+        anchor.parentNode.insertBefore(section, anchor);
+        document.documentElement.classList.add("tf-home-ready");
+      }
+
+      function renderService(page) {
+        var existing = document.getElementById("tf-detail");
+        var site = page.type === "service" && sites.filter(function (s) { return s.slug === page.slug; })[0];
+        if (!site) {
+          if (existing) existing.remove();
+          document.documentElement.classList.remove("tf-detail-ready");
+          return;
+        }
+        if (existing && existing.getAttribute("data-slug") === site.slug) return;
+        if (existing) existing.remove();
+        var heading = document.querySelector("main.container section > h1");
+        if (!heading) return;
+
+        var section = document.createElement("section");
+        section.id = "tf-detail";
+        section.className = "tf-section";
+        section.setAttribute("data-slug", site.slug);
+        var rows = [["Uptime", "uptime", function (v) { return v ? esc(v) : "–"; }]];
+        if (site.showAverageResponseTime === undefined || site.showAverageResponseTime) rows.push(["Average response time", "time", ms]);
+        function rangeLabel() { return RANGES.filter(function (r) { return r[0] === detailRange; })[0][2]; }
+        section.innerHTML =
+          '<div class="tf-section-head tf-kpi-head"><div class="tf-range" role="group" aria-label="Time range">' +
+          RANGES.map(function (r) {
+            return '<button type="button" data-range="' + r[0] + '" aria-pressed="' + (r[0] === detailRange) + '" title="' + r[2] + '">' + r[1] + "</button>";
+          }).join("") +
+          '</div></div><div class="tf-card tf-grid">' +
+          rows.map(function (row) {
+            return '<div class="tf-cell tf-kpi"><p class="tf-kpi-label">' + row[0] + "</p>" +
+              '<p class="tf-kpi-value" data-field="' + row[1] + '">' + row[2](site[row[1] + detailRange]) + "</p>" +
+              '<p class="tf-kpi-range">' + rangeLabel() + "</p></div>";
+          }).join("") +
+          "</div>";
+        section.querySelector(".tf-range").addEventListener("click", function (e) {
+          var button = e.target.closest("button");
+          if (!button) return;
+          detailRange = button.getAttribute("data-range");
+          var buttons = section.querySelectorAll(".tf-range button");
+          for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute("aria-pressed", String(buttons[i] === button));
+          rows.forEach(function (row) {
+            var value = section.querySelector('.tf-kpi-value[data-field="' + row[1] + '"]');
+            if (value) value.innerHTML = row[2](site[row[1] + detailRange]);
+          });
+          var labels = section.querySelectorAll(".tf-kpi-range");
+          for (var j = 0; j < labels.length; j++) labels[j].textContent = rangeLabel();
+        });
+        var summary = heading.parentNode;
+        summary.parentNode.insertBefore(section, summary.nextSibling);
+        if (!summary.querySelector(".tf-back")) {
+          var back = document.createElement("a");
+          back.className = "tf-back";
+          back.href = "/";
+          back.textContent = "← All services";
+          summary.insertBefore(back, heading);
+        }
+        if (site.icon && !heading.querySelector(".tf-favicon")) {
+          var favicon = document.createElement("img");
+          favicon.className = "tf-favicon";
+          favicon.src = site.icon;
+          favicon.alt = "";
+          favicon.width = 28;
+          favicon.height = 28;
+          heading.insertBefore(favicon, heading.firstChild);
+        }
+        document.documentElement.classList.add("tf-detail-ready");
+      }
+
+      // ---- Home cards: trace the top edge of Upptime's 7-day graph image so it can be
+      // drawn as a stroke over the flat fill (same coordinates as the image).
+      var sparkCache = {};
+      function traceSpark(url) {
+        if (sparkCache[url]) return sparkCache[url];
+        sparkCache[url] = new Promise(function (resolve, reject) {
+          var img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = function () {
+            try {
+              var w = img.naturalWidth, h = img.naturalHeight;
+              var canvas = document.createElement("canvas");
+              canvas.width = w;
+              canvas.height = h;
+              var ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0);
+              var px = ctx.getImageData(0, 0, w, h).data;
+              var pts = [];
+              for (var x = 0; x < w; x += 3) {
+                for (var y = 0; y < h; y++) {
+                  if (px[(y * w + x) * 4 + 3] > 96) { pts.push(x + "," + y); break; }
+                }
+              }
+              if (pts.length < 2) return reject(new Error("empty graph"));
+              resolve({ box: "0 0 " + w + " " + h, d: "M" + pts.join(" L") });
+            } catch (e) { reject(e); }
+          };
+          img.onerror = reject;
+          // Separate URL so a copy cached without CORS headers can't block reading the pixels.
+          img.src = url + (url.indexOf("?") === -1 ? "?" : "&") + "tf-trace=1";
+        });
+        return sparkCache[url];
+      }
+      function renderSparks() {
+        var sparks = document.querySelectorAll(".tf-spark[data-src]:not([data-traced])");
+        Array.prototype.forEach.call(sparks, function (el) {
+          el.setAttribute("data-traced", "pending");
+          traceSpark(el.getAttribute("data-src")).then(function (r) {
+            el.innerHTML = '<svg viewBox="' + r.box + '" preserveAspectRatio="none" aria-hidden="true"><path d="' + r.d + '"/></svg>';
+            el.setAttribute("data-traced", "done");
+          }).catch(function () { el.setAttribute("data-traced", "failed"); });
+        });
+      }
+
+      // ---- Service page chart: drawn from the response times Upptime's own chart
+      // loaded (cached in localStorage by Upptime), with theme colours and short labels.
+      function chartPoints(slug) {
+        try {
+          var item = JSON.parse(localStorage.getItem("commits-totalfamily-status-" + slug) || "null");
+          var list = item && item.data && item.data.data;
+          if (!Array.isArray(list)) return [];
+          return list.slice().reverse()
+            .filter(function (c) { return c.commit && /ms\) \[skip ci\]/.test(c.commit.message); })
+            .map(function (c) { return { t: Date.parse(c.commit.committer.date), ms: parseInt(c.commit.message.split(" in ")[1], 10) }; })
+            .filter(function (p) { return !isNaN(p.t) && !isNaN(p.ms); });
+        } catch (e) { return []; }
+      }
+      function niceStep(max) {
+        var steps = [50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000];
+        for (var i = 0; i < steps.length; i++) if (max / steps[i] <= 4) return steps[i];
+        return Math.ceil(max / 40000) * 10000;
+      }
+      function fmtDate(t, withTime) {
+        var d = new Date(t);
+        return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) +
+          (withTime ? ", " + d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "");
+      }
+      function lineChart(points, width, name) {
+        var H = 260, L = 64, R = 18, T = 16, B = 34;
+        var W = Math.max(280, Math.round(width));
+        var max = Math.max.apply(null, points.map(function (p) { return p.ms; }));
+        var step = niceStep(max * 1.08);
+        var top = Math.max(step, Math.ceil((max * 1.08) / step) * step);
+        var last = points.length - 1;
+        var plotW = W - L - R, plotH = H - T - B;
+        function x(i) { return L + (last === 0 ? plotW / 2 : (i * plotW) / last); }
+        function y(v) { return T + plotH * (1 - v / top); }
+        var out = '<svg viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '" role="img" aria-label="Response time for ' + esc(name) + ", latest " + points.length + ' checks">' +
+          '<defs><linearGradient id="tf-area-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="tf-stop-top"/><stop offset="1" class="tf-stop-bottom"/></linearGradient></defs>';
+        out += '<g class="tf-yaxis">';
+        for (var v = 0; v <= top; v += step) {
+          out += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/>' +
+            '<text x="' + (L - 10) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + (v === 0 ? "0" : v.toLocaleString("en-US") + " ms") + "</text>";
+        }
+        out += '</g><g class="tf-xaxis">';
+        var every = Math.max(1, Math.ceil(points.length / Math.max(2, Math.floor(plotW / 80))));
+        for (var i = last; i >= 0; i -= every) {
+          var anchor = i === last && last > 0 ? "end" : i === 0 ? "start" : "middle";
+          out += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 10) + '" text-anchor="' + anchor + '">' + esc(fmtDate(points[i].t)) + "</text>";
+        }
+        out += "</g>";
+        var line = points.map(function (p, i) { return (i ? "L" : "M") + x(i).toFixed(1) + "," + y(p.ms).toFixed(1); }).join(" ");
+        out += '<path class="tf-area" d="' + line + " L" + x(last).toFixed(1) + "," + y(0) + " L" + x(0).toFixed(1) + "," + y(0) + ' Z"/>' +
+          '<path class="tf-line" d="' + line + '"/>';
+        var slot = last === 0 ? plotW : plotW / last;
+        points.forEach(function (p, i) {
+          out += '<circle class="tf-dot" cx="' + x(i).toFixed(1) + '" cy="' + y(p.ms).toFixed(1) + '" r="3.5"/>' +
+            '<rect class="tf-point" x="' + (x(i) - slot / 2).toFixed(1) + '" y="' + T + '" width="' + slot.toFixed(1) + '" height="' + plotH + '" data-date="' + esc(fmtDate(p.t, true)) + '" data-text="' + p.ms.toLocaleString("en-US") + ' ms"/>';
+        });
+        return out + "</svg>";
+      }
+      function renderDetailChart(page) {
+        var existing = document.getElementById("tf-detail-chart");
+        var detail = document.getElementById("tf-detail");
+        var chartSkeleton = document.getElementById("tf-chart-skeleton");
+        if (page.type !== "service" || !detail) {
+          if (chartSkeleton) chartSkeleton.remove();
+          if (existing) existing.remove();
+          document.documentElement.classList.remove("tf-chart-ready");
+          return;
+        }
+        if (existing && existing.getAttribute("data-slug") === page.slug) { if (chartSkeleton) chartSkeleton.remove(); return; }
+        if (!document.querySelector("main.container section > canvas")) {
+          if (!chartSkeleton) {
+            chartSkeleton = document.createElement("div");
+            chartSkeleton.id = "tf-chart-skeleton";
+            chartSkeleton.className = "tf-section tf-card tf-linechart";
+            chartSkeleton.setAttribute("aria-hidden", "true");
+            chartSkeleton.innerHTML = '<span class="tf-skel tf-skel-name"></span><span class="tf-skel tf-skel-plot"></span><span class="tf-skel tf-skel-caption"></span>';
+            detail.parentNode.insertBefore(chartSkeleton, detail.nextSibling);
+          }
+          return;
+        }
+        if (chartSkeleton) chartSkeleton.remove();
+        var points = chartPoints(page.slug);
+        if (points.length < 2) return;
+        // Plot the last 7 days when there are enough checks in that window.
+        var weekAgo = Date.now() - 7 * DAY_MS;
+        var recent = points.filter(function (p) { return p.t >= weekAgo; });
+        var inWeek = recent.length >= 2;
+        if (inWeek) points = recent;
+        if (existing) existing.remove();
+        var site = sites.filter(function (s) { return s.slug === page.slug; })[0] || {};
+        var main = document.querySelector("main.container");
+        var section = document.createElement("section");
+        section.id = "tf-detail-chart";
+        section.className = "tf-section";
+        section.setAttribute("data-slug", page.slug);
+        section.setAttribute("data-width", String(main.clientWidth));
+        section.innerHTML = '<div class="tf-card tf-linechart"><div class="tf-card-head"><h3 class="tf-card-title">Response time</h3>' +
+          '<span class="tf-section-meta">' + (inWeek ? "Last 7 days" : "Latest checks") + "</span></div>" +
+          '<div class="tf-linechart-plot"></div>' +
+          '<div class="tf-chart-foot"><span>' + esc(fmtDate(points[0].t)) + " – " + esc(fmtDate(points[points.length - 1].t)) + "</span>" +
+          (typeof site.timeWeek === "number" ? "<span><strong>" + site.timeWeek.toLocaleString("en-US") + " ms</strong> avg" + (inWeek ? "" : " · last 7 days") + "</span>" : "") +
+          "</div></div>";
+        detail.parentNode.insertBefore(section, detail.nextSibling);
+        var plot = section.querySelector(".tf-linechart-plot");
+        plot.innerHTML = lineChart(points, plot.clientWidth, site.name || page.slug);
+        document.documentElement.classList.add("tf-chart-ready");
+      }
+      var resizeTimer = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          var chart = document.getElementById("tf-detail-chart");
+          var main = document.querySelector("main.container");
+          if (chart && main && chart.getAttribute("data-width") !== String(main.clientWidth)) { chart.remove(); render(); }
+        }, 150);
+      });
+
+      // Upptime's generic error page has no way back; add Reload + Back to status.
+      function renderErrorActions() {
+        var main = document.querySelector("main.container");
+        var existing = document.getElementById("tf-error-actions");
+        var isGenericError = main && main.querySelector(":scope > h1") && !main.querySelector(":scope > a.error-button, :scope > form, :scope > button");
+        if (!isGenericError) { if (existing) existing.remove(); return; }
+        if (existing) return;
+        var actions = document.createElement("div");
+        actions.id = "tf-error-actions";
+        actions.className = "tf-error-actions";
+        actions.innerHTML = '<button type="button">Reload page</button><a href="/">Back to status</a>';
+        actions.querySelector("button").addEventListener("click", function () { location.reload(); });
+        main.appendChild(actions);
+      }
+
+      function render() {
+        setPageClass(currentPage());
+        renderHero();
+        renderErrorActions();
+        if (!ready) return;
+        var page = currentPage();
+        renderHome(page);
+        renderSparks();
+        renderPreviewIncident(page);
+        renderService(page);
+        renderDetailChart(page);
+      }
+
+      // Tooltip for the daily bars.
+      var tip = null;
+      function showTip(bar) {
+        if (!tip) {
+          tip = document.createElement("div");
+          tip.id = "tf-tip";
+          tip.setAttribute("role", "tooltip");
+          document.body.appendChild(tip);
+        }
+        tip.innerHTML = "<strong>" + esc(bar.getAttribute("data-date")) + "</strong><span>" + esc(bar.getAttribute("data-text")) + "</span>";
+        tip.style.display = "block";
+        var r = bar.getBoundingClientRect();
+        var half = tip.offsetWidth / 2 + 8;
+        tip.style.left = Math.max(half, Math.min(window.innerWidth - half, r.left + r.width / 2)) + "px";
+        tip.style.top = r.top + "px";
+      }
+      function hideTip() { if (tip) tip.style.display = "none"; }
+      document.addEventListener("mouseover", function (e) {
+        var bar = e.target.closest && e.target.closest(".tf-day, .tf-point");
+        if (bar) showTip(bar); else hideTip();
+      });
+      window.addEventListener("scroll", hideTip, { passive: true });
+
+      // The whole service card opens its page; the name link stays the keyboard target.
+      document.addEventListener("click", function (e) {
+        var card = e.target.closest && e.target.closest(".tf-service");
+        if (!card || e.target.closest("a, button")) return;
+        var link = card.querySelector("h3 a");
+        if (!link) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey) { window.open(link.href, "_blank", "noopener"); return; }
+        link.click();
+      });
+
+      setPageClass(currentPage());
+      fetch(RAW + "/history/summary.json")
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          liveSites = Array.isArray(data) ? data : [];
+          sites = previewSites();
+          renderHero();
+          return Promise.all(sites.map(function (site) {
+            return fetch(RAW + "/history/" + site.slug + ".yml")
+              .then(function (res) { return res.ok ? res.text() : ""; })
+              .then(function (text) {
+                var m = /startTime:\s*(\S+)/.exec(text);
+                if (m && !isNaN(Date.parse(m[1]))) starts[site.slug] = Date.parse(m[1]);
+              })
+              .catch(function () {});
+          }));
+        })
+        .then(function () { ready = true; render(); })
+        .catch(function () { document.documentElement.classList.add("tf-load-failed"); });
+
+      // ---- Error-state preview (sample data only; never changes the real data) ----
+      function previewSites() {
+        if (preview === "live" || !liveSites) return liveSites;
+        var today = todayStart();
+        function key(daysAgo) { return new Date(today - daysAgo * DAY_MS).toISOString().slice(0, 10); }
+        return liveSites.map(function (site, i) {
+          var copy = JSON.parse(JSON.stringify(site));
+          var daily = copy.dailyMinutesDown = copy.dailyMinutesDown || {};
+          if (preview === "down" && i === 0) {
+            copy.status = "down";
+            daily[key(0)] = 138; daily[key(1)] = 42; daily[key(5)] = 9;
+            copy.timeDay = 4210; copy.timeWeek = 1890;
+            copy.uptimeDay = "90.42%"; copy.uptimeWeek = "98.21%"; copy.uptimeMonth = "99.36%";
+          } else if ((preview === "degraded" && i === liveSites.length - 1) || (preview === "down" && i === liveSites.length - 1 && i !== 0)) {
+            copy.status = "degraded";
+            daily[key(0)] = 24; daily[key(3)] = 11;
+            copy.timeDay = 2380; copy.timeWeek = 1120;
+            copy.uptimeDay = "98.33%"; copy.uptimeWeek = "99.66%"; copy.uptimeMonth = "99.89%";
+          }
+          return copy;
+        });
+      }
+      function renderPreviewIncident(page) {
+        var existing = document.getElementById("tf-preview-incident");
+        var services = document.getElementById("tf-services");
+        if (page.type !== "home" || preview === "live" || !services) { if (existing) existing.remove(); return; }
+        if (existing && existing.getAttribute("data-state") === preview) return;
+        if (existing) existing.remove();
+        var issues = sites.filter(function (s) { return s.status === "down" || s.status === "degraded"; });
+        if (!issues.length) return;
+        var section = document.createElement("section");
+        section.id = "tf-preview-incident";
+        section.setAttribute("data-state", preview);
+        // Same markup Upptime uses for real active incidents, so it previews their styling.
+        section.innerHTML = "<h2>Active Incidents</h2>" + issues.map(function (s, i) {
+          var degraded = s.status === "degraded";
+          var title = s.name + (degraded ? " has degraded performance" : " is down");
+          var opened = new Date(Date.now() - (42 + i * 15) * 60000).toLocaleString();
+          return '<article class="down down-active link' + (degraded ? " degraded" : "") + '"><div class="f"><div>' +
+            "<h4>" + esc(title) + "</h4><div>Opened at " + esc(opened) + " with " + (3 - i > 2 ? 3 - i : 2) + " posts</div></div>" +
+            '<div class="f r"><a href="#">Incident #' + (i + 1) + " report →</a></div></div></article>";
+        }).join("");
+        services.parentNode.insertBefore(section, services);
+      }
+      function setPreview(next) {
+        preview = next;
+        sites = previewSites();
+        ["tf-services", "tf-detail", "tf-preview-incident"].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.remove();
+        });
+        var hero = document.getElementById("tf-hero");
+        if (hero) hero.removeAttribute("data-state");
+        var buttons = document.querySelectorAll("#tf-preview button");
+        for (var i = 0; i < buttons.length; i++) buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-preview") === preview));
+        render();
+      }
+      function mountPreview() {
+        if (!PREVIEW_ENABLED || document.getElementById("tf-preview")) return;
+        var bar = document.createElement("div");
+        bar.id = "tf-preview";
+        bar.setAttribute("role", "group");
+        bar.setAttribute("aria-label", "Preview status states");
+        bar.innerHTML = "<span>Preview</span>" + [["live", "Live"], ["degraded", "Degraded"], ["down", "Outage"]].map(function (o) {
+          return '<button type="button" data-preview="' + o[0] + '" aria-pressed="' + (o[0] === preview) + '">' + o[1] + "</button>";
+        }).join("");
+        bar.addEventListener("click", function (e) {
+          var button = e.target.closest("button");
+          if (button) setPreview(button.getAttribute("data-preview"));
+        });
+        document.body.appendChild(bar);
+      }
+
+      function start() {
+        mountPreview();
+        render();
+        new MutationObserver(render).observe(document.body, { childList: true, subtree: true });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+      else start();
+    })();

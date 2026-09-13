@@ -3,7 +3,7 @@
   --body-background-color: #162525;
   --body-text-color: #f8f8f8;
 
-  --card-background-color: #2f3e3c;
+  --card-background-color: #1f2e2d;
   --card-border-color: #2d3b37;
 
   --nav-background-color: #162525;
@@ -36,28 +36,30 @@
 
   --graph-opacity: 0.95;
   --graph-filter: none;
-}
 
-/* Navigation and footer hidden; wordmark placed above the heading. */
-nav[class*="svelte-"],
-footer[class*="svelte-"] {
-  display: none !important;
-}
-
-main.container > header {
-  padding-top: 3rem;
-}
-
-main.container > header::before {
-  content: "";
-  display: block;
-  width: 200px;
-  height: 58px;
-  margin-bottom: 1.75rem;
-  background: url("/tf-logo.webp") left center / contain no-repeat;
-}
-
-/* Invert the wordmark on the dark surface. */
-main.container > header::before {
-  filter: brightness(0) invert(1);
+  /* Header, KPI and card tokens used by the status-website css in .upptimerc.yml */
+  --tf-primary: #e3e6e5;
+  --tf-skel: #283735;
+  --tf-skel-hi: #324341;
+  --tf-accent: #db684c;
+  --tf-accent-hover: #c95a40;
+  --tf-accent-soft: #3a2b26;
+  --tf-muted: #9fb0aa;
+  --tf-divider: #2a3836;
+  --tf-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --tf-up-soft: #1d3a30;
+  --tf-degraded-soft: #3d2c17;
+  --tf-down-soft: #4f1a18;
+  --tf-loading: #7d8b88;
+  --tf-loading-soft: #263433;
+  --tf-bar-up: #3f9e76;
+  --tf-bar-nodata: #2d3b37;
+  --tf-hover: #243433;
+  --tf-chart-line: #4fc08f;
+  --tf-chart-fill: rgba(79, 192, 143, 0.18);
+  --tf-chart-fade: rgba(79, 192, 143, 0);
+  --tf-spark-top: rgba(79, 192, 143, 0.32);
+  --tf-spark-bottom: rgba(79, 192, 143, 0);
+  --tf-chart-grid: #2b3a38;
+  --tf-chart-axis: #93a39e;
 }
