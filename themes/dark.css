@@ -1,63 +1,72 @@
-/* Total Family — dark theme */
+/* Total Family — dark theme (deep primary ink) */
 :root {
-  --body-background-color: #162525;
-  --body-text-color: #f8f8f8;
+  --body-background-color: #0c1515;
+  --body-text-color: #f2f4f3;
 
-  --card-background-color: #2f3e3c;
-  --card-border-color: #2d3b37;
+  --card-background-color: #131f1f;
+  --card-border-color: #213030;
 
-  --nav-background-color: #162525;
-  --nav-border-bottom-color: #2d3b37;
+  --nav-background-color: #0c1515;
+  --nav-border-bottom-color: #213030;
   --nav-current-border-bottom-color: #db684c;
 
   --up-border-left-color: #47be8b;
   --up-color-color: #47be8b;
-  --down-border-left-color: #f14d4c;
-  --down-color-color: #f14d4c;
-  --down-background-color: #4f1a18;
-  --degraded-border-left-color: #ee7e00;
-  --degraded-color-color: #ee7e00;
+  --down-border-left-color: #f25f5c;
+  --down-color-color: #f25f5c;
+  --down-background-color: #3a1716;
+  --degraded-border-left-color: #f0913a;
+  --degraded-color-color: #f0913a;
 
-  --tag-color: #162525;
+  --tag-color: #0c1515;
   --tag-up-background-color: #47be8b;
-  --tag-down-background-color: #f14d4c;
-  --tag-degraded-background-color: #ee7e00;
-  --change-background-color: #ee7e00;
+  --tag-down-background-color: #f25f5c;
+  --tag-degraded-background-color: #f0913a;
+  --change-background-color: #f0913a;
 
-  --code-background-color: #2d3b37;
-  --code-color: #acbcb5;
+  --code-background-color: #172423;
+  --code-color: #b3c2bd;
 
   --submit-button-border-color: #db684c;
   --submit-button-background-color: #db684c;
   --submit-button-color: #ffffff;
-  --error-button-border-color: #f14d4c;
-  --error-button-background-color: #f14d4c;
+  --error-button-border-color: #f25f5c;
+  --error-button-background-color: #f25f5c;
   --error-button-color: #ffffff;
 
   --graph-opacity: 0.95;
   --graph-filter: none;
+
+  /* Header, KPI and card tokens used by the status-website css in .upptimerc.yml */
+  --tf-primary: #e3e6e5;
+  --tf-skel: #182625;
+  --tf-skel-hi: #213130;
+  --tf-accent: #db684c;
+  --tf-accent-hover: #c95a40;
+  --tf-accent-soft: #2c1f1b;
+  --tf-muted: #93a49f;
+  --tf-divider: #1b2928;
+  --tf-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.35);
+  --tf-up-soft: #12302a;
+  --tf-degraded-soft: #33241a;
+  --tf-down-soft: #3a1716;
+  --tf-loading: #6f7f7b;
+  --tf-loading-soft: #182625;
+  --tf-bar-up: #3fae80;
+  --tf-bar-nodata: #1e2c2b;
+  --tf-hover: #172524;
+  --tf-chart-line: #4fc08f;
+  --tf-chart-fill: rgba(79, 192, 143, 0.18);
+  --tf-chart-fade: rgba(79, 192, 143, 0);
+  --tf-spark-top: rgba(79, 192, 143, 0.3);
+  --tf-spark-bottom: rgba(79, 192, 143, 0);
+  --tf-chart-grid: #1c2a29;
+  --tf-chart-axis: #8a9b96;
 }
 
-/* Navigation and footer hidden; wordmark placed above the heading. */
-nav[class*="svelte-"],
-footer[class*="svelte-"] {
-  display: none !important;
-}
-
-main.container > header {
-  padding-top: 3rem;
-}
-
-main.container > header::before {
-  content: "";
-  display: block;
-  width: 200px;
-  height: 58px;
-  margin-bottom: 1.75rem;
-  background: url("/tf-logo.webp") left center / contain no-repeat;
-}
-
-/* Invert the wordmark on the dark surface. */
-main.container > header::before {
-  filter: brightness(0) invert(1);
+/* The Total Family favicon is dark; give it a light tile so it reads on dark cards. */
+.tf-favicon {
+  padding: 2px;
+  background: #e6eae8;
+  box-sizing: border-box;
 }

@@ -36,23 +36,30 @@
 
   --graph-opacity: 1;
   --graph-filter: none;
-}
 
-/* Navigation and footer hidden; wordmark placed above the heading. */
-nav[class*="svelte-"],
-footer[class*="svelte-"] {
-  display: none !important;
-}
-
-main.container > header {
-  padding-top: 3rem;
-}
-
-main.container > header::before {
-  content: "";
-  display: block;
-  width: 200px;
-  height: 58px;
-  margin-bottom: 1.75rem;
-  background: url("/tf-logo.webp") left center / contain no-repeat;
+  /* Header, KPI and card tokens used by the status-website css in .upptimerc.yml */
+  --tf-primary: #162525;
+  --tf-skel: #efe9e1;
+  --tf-skel-hi: #f8f5f0;
+  --tf-accent: #a35b48;
+  --tf-accent-hover: #8e4d3c;
+  --tf-accent-soft: #f4e6e1;
+  --tf-muted: #66706e;
+  --tf-divider: #efe8df;
+  --tf-shadow: 0 1px 2px rgba(22, 37, 37, 0.04), 0 8px 24px rgba(22, 37, 37, 0.06);
+  --tf-up-soft: #dcf1e8;
+  --tf-degraded-soft: #f8e5de;
+  --tf-down-soft: #ffdcd7;
+  --tf-loading: #9aa3a1;
+  --tf-loading-soft: #eef0ef;
+  --tf-bar-up: #6fbf9a;
+  --tf-bar-nodata: #e6dfd6;
+  --tf-hover: #faf5ee;
+  --tf-chart-line: #12875c;
+  --tf-chart-fill: rgba(18, 135, 92, 0.16);
+  --tf-chart-fade: rgba(18, 135, 92, 0);
+  --tf-spark-top: rgba(18, 135, 92, 0.28);
+  --tf-spark-bottom: rgba(18, 135, 92, 0);
+  --tf-chart-grid: #efe8df;
+  --tf-chart-axis: #7a8482;
 }
