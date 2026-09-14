@@ -45,8 +45,8 @@ status-website:
       <div class="container">
         <div class="tf-bar">
           <a class="tf-brand" href="/" aria-label="Total Family Status home">
-            <img src="/tf-logo.webp" alt="Total Family" width="72" height="48" />
-            <span>Status</span>
+            <span class="tf-logo" role="img" aria-label="Total Family"></span>
+            <span class="tf-brand-label">Status</span>
           </a>
           <div class="tf-actions">
             <a class="tf-btn tf-btn-ghost" href="https://help.totalfamily.io" target="_blank" rel="noopener">Help Centre</a>
@@ -156,8 +156,10 @@ status-website:
     .tf-banner > .container { position: relative; }
     .tf-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
     .tf-brand { display: flex; align-items: center; gap: 0.9rem; color: #fff; text-decoration: none; }
-    .tf-brand img { display: block; height: 48px; width: auto; filter: brightness(0) invert(1); }
-    .tf-brand span { padding-left: 0.9rem; border-left: 1px solid rgba(255, 255, 255, 0.3); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.78); }
+    /* Logo as a CSS background: an <img src="/..."> gets crawled by the site export and
+       collides with the copied asset (same cause as the favicon/wordmark fixes in #11). */
+    .tf-logo { display: block; width: 72px; height: 48px; background: url("/tf-logo.webp") left center / contain no-repeat; filter: brightness(0) invert(1); }
+    .tf-brand-label { padding-left: 0.9rem; border-left: 1px solid rgba(255, 255, 255, 0.3); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255, 255, 255, 0.78); }
     .tf-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .tf-btn { display: inline-flex; align-items: center; padding: 0.55rem 1rem; border-radius: 0.6rem; border: 1px solid transparent; font-size: 0.9rem; font-weight: 600; line-height: 1.2; text-decoration: none; transition: background-color 0.15s, border-color 0.15s; }
     .tf-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
@@ -286,7 +288,7 @@ status-website:
       .tf-short { display: inline; }
       .tf-banner { padding-bottom: 4rem; }
       .tf-intro { margin-top: 2rem; }
-      .tf-brand img { height: 40px; }
+      .tf-logo { width: 60px; height: 40px; }
       .tf-hero { padding: 0.75rem 1rem; }
       .tf-hero .tf-status-icon { width: 1.75rem; height: 1.75rem; }
       .tf-hero-title { font-size: 1rem; }
