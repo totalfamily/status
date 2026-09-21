@@ -1,7 +1,7 @@
 url: https://app.totalfamily.io/api/health
-status: degraded
+status: up
 code: 200
-responseTime: 121
-lastUpdated: 2026-09-21T11:22:33.748Z
+responseTime: 829
+lastUpdated: 2026-09-21T11:31:50.288Z
 startTime: 2026-09-02T05:36:13.945Z
 generator: Upptime <https://github.com/upptime/upptime>
