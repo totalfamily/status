@@ -41,20 +41,21 @@
     "url": "https://help.totalfamily.io",
     "icon": "https://icons.duckduckgo.com/ip3/help.totalfamily.io.ico",
     "slug": "help-center",
-    "status": "degraded",
-    "uptime": "99.95%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "99.72%",
-    "uptimeMonth": "99.91%",
-    "uptimeYear": "99.95%",
-    "time": 991,
-    "timeDay": 2118,
-    "timeWeek": 1270,
-    "timeMonth": 1235,
-    "timeYear": 991,
+    "status": "up",
+    "uptime": "99.93%",
+    "uptimeDay": "99.00%",
+    "uptimeWeek": "99.57%",
+    "uptimeMonth": "99.88%",
+    "uptimeYear": "99.93%",
+    "time": 977,
+    "timeDay": 1480,
+    "timeWeek": 1173,
+    "timeMonth": 1207,
+    "timeYear": 977,
     "dailyMinutesDown": {
       "2026-09-18": 10,
-      "2026-10-09": 29
+      "2026-10-09": 29,
+      "2026-10-15": 14
     }
   }
 ]
