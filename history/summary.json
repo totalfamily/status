@@ -4,17 +4,17 @@
     "url": "https://app.totalfamily.io/api/health",
     "icon": "https://icons.duckduckgo.com/ip3/app.totalfamily.io.ico",
     "slug": "total-family-app",
-    "status": "degraded",
-    "uptime": "98.03%",
-    "uptimeDay": "97.01%",
-    "uptimeWeek": "91.58%",
-    "uptimeMonth": "96.94%",
-    "uptimeYear": "98.03%",
-    "time": 765,
-    "timeDay": 1510,
-    "timeWeek": 1322,
-    "timeMonth": 769,
-    "timeYear": 765,
+    "status": "up",
+    "uptime": "98.01%",
+    "uptimeDay": "95.79%",
+    "uptimeWeek": "91.41%",
+    "uptimeMonth": "96.90%",
+    "uptimeYear": "98.01%",
+    "time": 770,
+    "timeDay": 1501,
+    "timeWeek": 1326,
+    "timeMonth": 775,
+    "timeYear": 770,
     "dailyMinutesDown": {
       "2026-09-15": 11,
       "2026-09-18": 21,
@@ -38,7 +38,7 @@
       "2026-10-18": 6,
       "2026-10-19": 20,
       "2026-10-20": 43,
-      "2026-10-21": 0
+      "2026-10-21": 18
     }
   },
   {
